@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Quiz Game</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 20px; max-width: 600px; margin: auto; }
+    h1, h2 { text-align: center; }
+    .question { margin-bottom: 20px; font-weight: bold; }
+    .option { display: block; margin: 5px 0; }
+    button { padding: 10px 20px; background: #0078D7; color: white; border: none; cursor: pointer; margin-top: 10px; }
+    button:hover { background: #005a9e; }
+    #result, #leaderboard { margin-top: 30px; }
+  </style>
+</head>
+<body>
+  <h1>🧠 My Quiz Game</h1>
+  <div id="quiz"></div>
+  <button onclick="submitAnswer()">Submit Answer</button>
+  <div id="result"></div>
+  <div id="leaderboard"></div>
+
+  <script>
+    const questions = [
+      {
+        question: "What is the capital of France?",
+        options: ["Berlin", "Madrid", "Paris", "Rome"],
+        answer: 2
+      },
+      {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Earth", "Mars", "Jupiter", "Venus"],
+        answer: 1
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+
+    function loadQuestion() {
+      const q = questions[current];
+      const quizDiv = document.getElementById("quiz");
+      quizDiv.innerHTML = `<div class="question">${q.question}</div>` +
+        q.options.map((opt, i) =>
+          `<label class="option"><input type="radio" name="option" value="${i}"> ${opt}</label>`
+        ).join('');
+    }
+
+    function submitAnswer() {
+      const selected = document.querySelector('input[name="option"]:checked');
+      if (!selected) return alert("Please select an answer!");
+      if (parseInt(selected.value) === questions[current].answer) score++;
+      current++;
+      if (current < questions.length) {
+        loadQuestion();
+      } else {
+        document.getElementById("quiz").innerHTML = "";
+        document.getElementById("result").innerText = `🎉 You scored ${score}/${questions.length}`;
+        sendToGoogleSheets(score);
+      }
+    }
+
+    function sendToGoogleSheets(score) {
+      const name = prompt("Enter your name for the leaderboard:");
+      if (!name) return;
+
+      fetch("YOUR_WEB_APP_URL_HERE", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, score })
+      })
+      .then(() => {
+        document.getElementById("leaderboard").innerHTML = "<p>✅ Score submitted to Google Sheets!</p>";
+      })
+      .catch(err => {
+        console.error(err);
+        alert("❌ Failed to submit score.");
+      });
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
