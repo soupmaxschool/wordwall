@@ -64,7 +64,7 @@
       const name = prompt("Enter your name for the leaderboard:");
       if (!name) return;
 
-      fetch("https://script.google.com/a/macros/hwbcymru.net/s/AKfycbx-5d3JGMulbUrumg_wSJMEo0xLJZja6FOOxlEEZMBhUhGoNVUSDFIxr8z5cEFYBrzIww/exec", {
+      fetch(Secret.Macro, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, score })
